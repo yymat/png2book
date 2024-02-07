@@ -1,0 +1,32 @@
+Sub png2book()
+    Dim fd As FileDialog
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim sp As Shape
+    Dim sPath As String, fPath As String
+
+    'Specify the folder where png is located.	'pngがあるフォルダを指定する
+    Set fd = Application.FileDialog(msoFileDialogFolderPicker)
+    If fd.Show = False Then Exit Sub
+
+    sPath = fd.SelectedItems(1) & "\"
+    fPath = Dir(sPath & "*.png", vbNormal)
+
+    Set wb = Workbooks.Add
+    
+    'Add images to sheets.	'画像をシートに追加する
+    While (fPath <> "")
+        Set ws = wb.Worksheets.Add(after:=wb.Worksheets(wb.Worksheets.Count))
+        ws.Name = wb.Worksheets.Count - 1
+        Set sp = ws.Shapes.AddPicture(sPath & fPath, False, True, 0, ws.Cells(2, 1).Top, 0, 0)
+        sp.ScaleWidth 1, True
+        sp.ScaleHeight 1, True
+        fPath = Dir()
+    Wend
+
+    'delete Sheet1
+    Application.DisplayAlerts = False
+    wb.Sheets("Sheet1").Delete
+    Application.DisplayAlerts = True
+
+End Sub
